@@ -11,36 +11,53 @@ namespace EmployeeHierarchy
         public class Node
         {
             public Employee employee;
-            public Node left, right;
+            public List<Node> children;
             public Node(Employee employee)
             {
                 this.employee = employee;
-                left = right = null;
+                children = null;
             }
         }
 
         public Node root = null;
-        public void Add (Node root,Employee employee)
+
+        public void InsertEmployee(Employee employee)
+        {
+            var root = GetManagerNode(employee);
+            AddNode(root, employee);
+        }
+        public void AddNode(Node head, Employee employee)
         {
             Node newNode = new Node(employee);
-            if (root == null)
+            if (head == null)
             {
-                root = newNode;
+                head = newNode;
                 return;
             }
 
-            if(string.Compare(employee.ManagerId,root.left.employee.ManagerId) > 0)
-            {
-
-            }
+            if (head.children == null)
+                head.children = new List<Node>() { newNode };
+            else
+                head.children.Add(newNode);
         }
 
-        private int SalaryBudget(Node root)
+        private Node GetManagerNode(Employee employee)
         {
-            SalaryBudget(root.left);
-            SalaryBudget(root.right);
+            if (root.employee.Id == employee.ManagerId)
+                return root;
 
-            var salary = +root.employee.Salary;
+            foreach (var child in root.children)
+                if (child.employee.Id == employee.ManagerId)
+                    return child;
+
+            return null;
+        }
+
+        private int SalaryBudget(Node head)
+        {
+            int salary = head.employee.Salary;
+            foreach (var child in head.children)
+                salary = +child.employee.Salary;
 
             return salary;
         }

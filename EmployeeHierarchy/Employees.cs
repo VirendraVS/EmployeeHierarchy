@@ -25,30 +25,30 @@ namespace EmployeeHierarchy
             if (ValidateManagerNotEmployee(employees)) throw new Exception("Some Managers are not employees");
         }
 
-        private bool ValidateSalary(string salary)
+        public bool ValidateSalary(string salary)
         {
             int result;
             return int.TryParse(salary, out result);
         }
 
-        private bool ValidateManager(List<Employee> employees)
+        public bool ValidateManager(List<Employee> employees)
         {
             return employees.Select(t => new {t.Id, t.ManagerId }).GroupBy(c => c.Id, x => x.ManagerId).Count() > 1;
         }
 
-        private bool ValidateOneCEO(List<Employee> employees)
+        public bool ValidateOneCEO(List<Employee> employees)
         {
             return employees.Where(c => c.ManagerId == null).Count() == 1;
         }
 
 
         //NB: To be implemented later
-        private bool ValidateEmployeeCircularReference(List<Employee> employees)
+        public bool ValidateEmployeeCircularReference(List<Employee> employees)
         {
             return false;
         }
 
-        private bool ValidateManagerNotEmployee(List<Employee> employees)
+        public bool ValidateManagerNotEmployee(List<Employee> employees)
         {
             var employeeIds = new HashSet<string>(employees.Where(x => x.ManagerId != null).Select(x => x.Id));
             return employees.Where(e => !employeeIds.Contains(e.ManagerId)).Count() > 0;
