@@ -54,6 +54,9 @@
     <Compile Include="EmployeesTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Employees.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -23,27 +23,30 @@ namespace EmployeeHierarchy
 
         public void InsertEmployee(Employee employee)
         {
-            var root = GetManagerNode(employee);
-            AddNode(root, employee);
+            var nodeManager = GetManagerNode(employee);
+            AddNode(nodeManager, employee);
         }
-        public void AddNode(Node head, Employee employee)
+        public void AddNode(Node nodeManager, Employee employee)
         {
             Node newNode = new Node(employee);
-            if (head == null)
+            if (nodeManager == null)
             {
-                head = newNode;
+                root = newNode;
+                nodeManager = newNode;
                 return;
             }
 
-            if (head.children == null)
-                head.children = new List<Node>() { newNode };
+            if (nodeManager.children == null)
+                nodeManager.children = new List<Node>() { newNode };
             else
-                head.children.Add(newNode);
+                nodeManager.children.Add(newNode);
         }
 
         private Node GetManagerNode(Employee employee)
-        {
-            if (root.employee.Id == employee.ManagerId)
+        {   if (root == null)
+                return null;
+
+            if (root.employee.Id == employee.ManagerId || root.employee.ManagerId == string.Empty)
                 return root;
 
             foreach (var child in root.children)
@@ -53,11 +56,20 @@ namespace EmployeeHierarchy
             return null;
         }
 
+        public int GetSalaryBudegetForManager(Employee employee)
+        {
+            var nodeManager = GetManagerNode(employee);
+            var result = SalaryBudget(nodeManager);
+
+            return result;
+        }
+
         private int SalaryBudget(Node head)
         {
             int salary = head.employee.Salary;
+            //O(h) where h is the height of the tree
             foreach (var child in head.children)
-                salary = +child.employee.Salary;
+                salary = salary  + child.employee.Salary;
 
             return salary;
         }

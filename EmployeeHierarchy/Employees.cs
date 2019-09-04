@@ -8,21 +8,21 @@ namespace EmployeeHierarchy
 {
     public class Employees
     {
-       
+        public List<Employee> employees = new List<Employee>();
         public Employees(string filename)
         {
-            var employees = (from row in File.ReadLines(filename).Where(t => !string.IsNullOrWhiteSpace(t)).AsEnumerable()
+            employees.AddRange((from row in File.ReadLines(filename).Where(t => !string.IsNullOrWhiteSpace(t)).AsEnumerable()
                             let columns = row.Split(',')
                             select new Employee
                             {
                                 Id = columns[0],
                                 ManagerId = columns[1],
                                 Salary = ValidateSalary(columns[2]) ? Convert.ToInt32(columns[2]) : 0
-                            }).OrderBy(x => x.ManagerId).ToList();
+                            }).OrderBy(x => x.ManagerId).ToList());
 
-            if (ValidateManager(employees)) throw new Exception("Employee with more than  one manager found");
-            if(!ValidateOneCEO(employees)) throw new Exception("More than CEO found");
-            if (ValidateManagerNotEmployee(employees)) throw new Exception("Some Managers are not employees");
+            if (ValidateManager()) throw new Exception("Employee with more than  one manager found");
+            if(!ValidateOneCEO()) throw new Exception("More than CEO found");
+            if (ValidateManagerNotEmployee()) throw new Exception("Some Managers are not employees");
         }
 
         public bool ValidateSalary(string salary)
@@ -31,27 +31,35 @@ namespace EmployeeHierarchy
             return int.TryParse(salary, out result);
         }
 
-        public bool ValidateManager(List<Employee> employees)
+        public bool ValidateManager()
         {
-            return employees.Select(t => new {t.Id, t.ManagerId }).GroupBy(c => c.Id, x => x.ManagerId).Count() > 1;
+           var result =  employees.GroupBy(
+                 (item => new {item.Id,item.ManagerId }),
+                 (key, elements) => new {
+                     Id = key,
+                     count = elements.Distinct().Count()
+                 }).Where(x => x.count > 1).Count();
+
+            return result > 0;
         }
 
-        public bool ValidateOneCEO(List<Employee> employees)
+        public bool ValidateOneCEO()
         {
-            return employees.Where(c => c.ManagerId == null).Count() == 1;
+            return employees.Where(c => c.ManagerId == null || c.ManagerId == string.Empty).Count() == 1;
         }
 
 
         //NB: To be implemented later
-        public bool ValidateEmployeeCircularReference(List<Employee> employees)
+        public bool ValidateEmployeeCircularReference()
         {
             return false;
         }
 
-        public bool ValidateManagerNotEmployee(List<Employee> employees)
+        public bool ValidateManagerNotEmployee()
         {
-            var employeeIds = new HashSet<string>(employees.Where(x => x.ManagerId != null).Select(x => x.Id));
-            return employees.Where(e => !employeeIds.Contains(e.ManagerId)).Count() > 0;
+            var employeeIds = new HashSet<string>(employees.Select(x => x.Id));
+
+            return employees.Where(e => !employeeIds.Contains(e.ManagerId) && e.ManagerId != string.Empty).Count() > 0;
         }
     }
 }

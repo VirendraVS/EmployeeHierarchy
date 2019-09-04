@@ -1,0 +1,10 @@
+CarSales 
+=========
+SELECT CarMaker,CarModel, SUM(SalePriceInDollar) AS TotalSalePrice FROM CarSales WHERE SaleDate BETWEEN DATEADD(d,-30,GETDATE()) AND GETDATE() GROUP BY CarMaker,CarModel
+
+Sample Data
+CarMaker	        CarModel	    TotalSalePrice
+Mitsubishi Motors	1605092587599	9216.00
+Skoda	            1618100916799	6252.00
+Cadillac	        1645041990399	8306.00
+Volvo	            1664122672999	9498.00

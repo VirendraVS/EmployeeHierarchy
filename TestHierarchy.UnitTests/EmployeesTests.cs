@@ -8,20 +8,16 @@ namespace TestHierarchy.UnitTests
     [TestClass]
     public class EmployeesTests
     {
-        public List<Employee> employees;
+        public Employees EmployeeClass = new EmployeeHierarchy.Employees(@"Employees.csv");
+
         [TestMethod]
-        public void ValidateOneCEO_Scenario()
+        public void Employees_Scenario()
         {
-            employees = new List<Employee>() {
-                new Employee { Id = "E1", ManagerId = null, Salary = 10000 },
-                new Employee { Id = "E2", ManagerId = "E1", Salary = 8500 },
-                new Employee { Id = "E3", ManagerId = "E2", Salary = 6500 },
-                };
-            var employeeObject = new EmployeeHierarchy.Employees();
+            var result = EmployeeClass.ValidateOneCEO();
+            Assert.IsTrue(result);
 
-            var result = employeeObject.ValidateOneCEO(employees);
-
-                Assert.IsTrue(result);
+            var result1 = EmployeeClass.ValidateManagerNotEmployee();
+            Assert.IsFalse(result1);
         }
     }
 }
