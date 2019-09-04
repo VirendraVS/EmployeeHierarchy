@@ -46,7 +46,7 @@ namespace EmployeeHierarchy
         {   if (root == null)
                 return null;
 
-            if (root.employee.Id == employee.ManagerId || root.employee.ManagerId == string.Empty)
+            if (root.employee.Id == employee.ManagerId || employee.ManagerId == string.Empty)
                 return root;
 
             foreach (var child in root.children)
@@ -67,9 +67,15 @@ namespace EmployeeHierarchy
         private int SalaryBudget(Node head)
         {
             int salary = head.employee.Salary;
-            //O(h) where h is the height of the tree
+            //O(h^2) where h is the height of the tree
             foreach (var child in head.children)
-                salary = salary  + child.employee.Salary;
+            {
+                salary = salary + child.employee.Salary;
+                if(child.children != null)
+                    foreach (var ch in child.children)
+                        salary = salary + ch.employee.Salary;
+
+            }
 
             return salary;
         }

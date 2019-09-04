@@ -11,13 +11,17 @@ namespace TestHierarchy.UnitTests
         public Employees EmployeeClass = new EmployeeHierarchy.Employees(@"Employees.csv");
 
         [TestMethod]
-        public void Employees_Scenario()
+        public void ValidateCEO_Scenario()
         {
             var result = EmployeeClass.ValidateOneCEO();
             Assert.IsTrue(result);
+        }
 
-            var result1 = EmployeeClass.ValidateManagerNotEmployee();
-            Assert.IsFalse(result1);
+        [TestMethod]
+        public void ValidateManagerNotEmployee_Scenario()
+        {
+            var result = EmployeeClass.ValidateManagerNotEmployee();
+            Assert.IsFalse(result);
         }
     }
 }
